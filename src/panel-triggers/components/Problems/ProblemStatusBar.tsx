@@ -12,7 +12,7 @@ export interface ProblemStatusBarProps {
 export default function ProblemStatusBar(props: ProblemStatusBarProps) {
   const { problem, alerts, className } = props;
   const multiEvent = problem.type === '1';
-  const link = problem.url && problem.url !== '';
+  const link = (problem.url && problem.url !== '') || (problem.opdata && problem.opdata !== '');
   const maintenance = problem.maintenance;
   const manualClose = problem.manual_close === '1';
   const error = problem.error && problem.error !== '';
@@ -20,11 +20,14 @@ export default function ProblemStatusBar(props: ProblemStatusBarProps) {
   const closeByTag = problem.correlation_mode === '1';
   const actions = alerts && alerts.length !== 0;
   const actionMessage = actions ? alerts[0].message : '';
+ 
+  console.log(problem.url)
+  console.log(problem.opdata)
 
   return (
     <div className={`problem-statusbar ${className || ''}`}>
       <ProblemStatusBarItem icon="wrench" fired={maintenance} tooltip="Host maintenance" />
-      <ProblemStatusBarItem icon="globe" fired={link} link={link && problem.url} tooltip="External link" />
+      <ProblemStatusBarItem icon="globe" fired={link} link={link && (problem.url || problem.opdata)} tooltip="External link" />
       <ProblemStatusBarItem icon="bullhorn" fired={multiEvent} tooltip="Trigger generates multiple problem events" />
       <ProblemStatusBarItem icon="tag" fired={closeByTag} tooltip={`OK event closes problems matched to tag: ${problem.correlation_tag}`} />
       <ProblemStatusBarItem icon="circle-o-notch" fired={actions} tooltip={actionMessage} />
